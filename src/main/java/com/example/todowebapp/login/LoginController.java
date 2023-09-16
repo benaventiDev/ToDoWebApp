@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.slf4j.Logger;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 
 @Controller
 @RequiredArgsConstructor
+@SessionAttributes("name")
 public class LoginController {
 
     private final AuthenticationService authenticationService;
@@ -26,15 +28,15 @@ public class LoginController {
 
     @RequestMapping(value="login", method = RequestMethod.GET)
     public String login() {
-        return "login";
+        return "login/login";
     }
     @RequestMapping(value="login", method = RequestMethod.POST)
     public String goToWelcomePage(@RequestParam String name, @RequestParam String password, ModelMap model) {
         if (authenticationService.authenticate(name, password)) {
             model.put("name", name);
-            return "welcome";
+            return "welcome/welcome";
         }
         model.put("errorMessage", "Invalid username or password");
-        return "login";
+        return "login/login";
     }
 }
