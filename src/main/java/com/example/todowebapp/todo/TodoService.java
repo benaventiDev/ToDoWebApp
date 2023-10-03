@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
+
 
 @Service
 public class TodoService {
-    private static List<Todo> todos = new ArrayList<>();
+    private static final List<Todo> todos = new ArrayList<>();
     private static int todosCount = 0;
     static {
         todos.add(new Todo(todosCount++, "in28minutes","Get AWS Certified 1",
