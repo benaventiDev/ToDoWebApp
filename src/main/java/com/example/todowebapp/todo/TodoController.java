@@ -3,6 +3,8 @@ package com.example.todowebapp.todo;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -23,10 +25,11 @@ public class TodoController {
     @RequestMapping("list-todos")
     public String listAllTodos(ModelMap model) {
 
-        List<Todo> todos = todoService.findByUsername("username");
+        List<Todo> todos = todoService.findByUsername(getLoggedInUsername());
         model.addAttribute("todos", todos);
         return "todos/listTodos";
     }
+
 
 
 
@@ -37,11 +40,11 @@ public class TodoController {
     }
 
     @RequestMapping(value="add-todo", method = RequestMethod.POST)
-    public String addNewTodo(ModelMap model, @Valid Todo todo, BindingResult result) {
+    public String addNewTodo(@Valid Todo todo, BindingResult result) {
         if(result.hasErrors()) {
             return "todo/todo";
         }
-        todoService.addTodo((String) model.get("name"), todo.getDescription(), todo.getTargetDate(), false);
+        todoService.addTodo(getLoggedInUsername(), todo.getDescription(), todo.getTargetDate(), false);
         return "redirect:list-todos";
     }
 
@@ -60,13 +63,17 @@ public class TodoController {
 
 
     @RequestMapping(value = "update-todo", method = RequestMethod.POST)
-    public String updateTodo(ModelMap model, @Valid Todo todo, BindingResult result){
+    public String updateTodo(@Valid Todo todo, BindingResult result){
         if(result.hasErrors()) {
             return "todo";
         }
-        todo.setUsername((String) model.get("name"));
-        //todo.setTargetDate((LocalDate) model.get("targetDate"));
+        todo.setUsername(getLoggedInUsername());
         todoService.updateTodo(todo);
         return "redirect:list-todos";
+    }
+
+    private static String getLoggedInUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth.getName();
     }
 }
