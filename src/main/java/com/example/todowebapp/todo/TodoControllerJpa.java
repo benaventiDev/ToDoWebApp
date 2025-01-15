@@ -61,7 +61,6 @@ public class TodoControllerJpa {
         return "todo/todo";
     }
 
-
     @RequestMapping(value = "update-todo", method = RequestMethod.POST)
     public String updateTodo(@Valid Todo todo, BindingResult result){
         if(result.hasErrors()) {
